@@ -86,11 +86,16 @@ fi
 
 SERVICE=$1
 
-svok $SVDIR/$SERVICE || exit 1
-svok $SVDIR/$SERVICE/log || exit 1
-
 shift 1
 
-cat $SVDIR/$SERVICE/log/main/current $* | tai64nlocal
+if [ -d $SVDIR/$SERVICE/ ]; then
+	svok $SVDIR/qmail-$SERVICE || exit 1
+	svok $SVDIR/qmail-$SERVICE/log || exit 1
+	cat /var/log/qmail/$SERVICE/current $* | tai64nlocal
+else
+	svok $SVDIR/qmail-$SERVICE || exit 1
+	svok $SVDIR/qmail-$SERVICE/log || exit 1
+        cat /var/log/qmail/$SERVICE/current $* | tai64nlocal
+fi
 
 exit 0
